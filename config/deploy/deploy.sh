@@ -7,7 +7,7 @@ rails assets:precompile
 
 echo "transferring files..."
 
-rsync -a -e "ssh -i $EC2_IDENTITY_FILE" ../docker-rails-school-complete $EC2_HOST:~ --exclude=.git --exclude=docker-compose.override.yml
+rsync -a -e "ssh -i $EC2_IDENTITY_FILE" ../$(echo $(basename $(PWD))) $EC2_HOST:~ --exclude=.git --exclude=docker-compose.override.yml
 
 echo "complete!"
 
