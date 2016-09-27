@@ -11,9 +11,14 @@ RUN mkdir -p $RAILS_ROOT/tmp/pids
 WORKDIR $RAILS_ROOT
 # copy over startup.sh file
 COPY config/startup.sh /opt/startup.sh
-# copy over rails files to $RAILS_ROOT
-COPY . .
+# copy over Gemfile
+COPY Gemfile Gemfile
+# copy over Gemfile.lock
+COPY Gemfile.lock Gemfile.lock
 # install bundler gem
 RUN gem install bundler
-# run bundle install
+# run bundle install before copying over the entire app. This way installed gems are
+# cached and you only have to wait for bundle install to run again if Gemfile is changed
 RUN bundle install
+# copy over rails files to $RAILS_ROOT
+COPY . .
