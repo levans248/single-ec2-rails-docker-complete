@@ -1,0 +1,9 @@
+<%= flash[:new_user] %>
+<%= flash[:email_sent] %>
+
+<p><a href="/users/new">Subscribe to Mailing List</a> | <a href="/email_users/new">Email List</a></p>
+<h1>Subscribed Users:</h1>
+
+<% @users.each do |user| %>
+  <p><%= user.email %></p>
+<% end %>

@@ -1,0 +1,12 @@
+<h1>Please enter your email below to be added to the mailing list:</h1>
+
+<%= form_for @user do |f| %>
+  <div class="form">
+    <%= f.label :email %>
+    <%= f.text_field :email, class: "form-text" %>
+  </div>
+
+  <%= f.submit "Subscribe" %>
+<% end %>
+
+<p><a href="/">Back</a></p>

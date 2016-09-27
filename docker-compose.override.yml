@@ -1,0 +1,12 @@
+version: "2"
+
+services:
+  app:
+    environment:
+      - RAILS_ENV=development
+    volumes:
+      - .:/rails_app
+
+  nginx:
+    volumes_from:
+      - app

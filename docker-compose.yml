@@ -1,0 +1,80 @@
+# version 2 lets docker know we will be using the 2nd version of the docker compose file format
+version: "2"
+
+# this is where you will configure each container
+services:
+  # this is our rails app container
+  app:
+    # build specifies where to find the Dockerfile.  In this case it is in the same
+    # directory as the docker-compose.yml file and it has to be named Dockerfile.
+    # To specify a file with a different name you will need to use build with context
+    # and dockerfile suboptions.
+    build: .
+    environment:
+      - RAILS_ENV=production
+    # call startup.sh script
+    command: [ "/opt/startup.sh" ]
+    expose:
+      - "3000"
+    # docker-compose will automatically look in .env for environment variables.
+    env_file: .env
+    # links other services and specifies dependencies in service to determine startup order
+    links:
+      - db
+      - redis
+
+  # this is our database container
+  db:
+    # specifies what image to use to build the container
+    image: postgres:9.4
+    # named volume which needs to be specified below in the top value volumes key
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  # redis container
+  redis:
+    # build container from redis image
+    image: redis
+    # start the redis server
+    command: redis-server
+    # port 6379 is the default port redis runs on
+    ports:
+      - "6379"
+    # specify a nmed volume and add it to volumes below so it is created
+    volumes:
+      - redis:/var/lib/redis/data
+
+  # this is the sidekiq container
+  sidekiq:
+    # we can use the same dockerfile to build the sidekiq service since we will
+    # use the same files
+    build: .
+    # link sidekiq to both the database and redis
+    links:
+      - db
+      - redis
+    # run the sidekiq.yml file
+    command: bundle exec sidekiq -C config/sidekiq.yml
+    env_file: .env
+
+  # nginx container
+  nginx:
+    # this time we need to tell docker-compose where to find the docker file and
+    # what it is called so we use build with context and dockerfile nested options
+    build:
+      context: .
+      dockerfile: config/nginx-Dockerfile
+    # link it to the app
+    links:
+      - app
+    # we want to use port 80 which is the default port to listen to webclients on.
+    ports:
+      - "80:80"
+
+
+# named volumes need to be specified down here so they are created. In docker
+# compose version 1, these were created automatically if they did not already exist.
+volumes:
+  postgres:
+  redis:
+

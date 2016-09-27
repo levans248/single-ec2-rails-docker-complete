@@ -1,0 +1,15 @@
+<h1>Fill out form with info to send out to mailing list:</h1>
+
+<%= form_tag "/email_users", method: :post  do %>
+  <div class="form">
+    <p><%= label_tag :from, "From:" %></p>
+    <%= text_field_tag :from, nil, class: "from" %>
+  </div>
+  <div class="form">
+    <p><%= label_tag :message, "Message:" %></div><p>
+    <%= text_area_tag :message, nil, class: "message" %>
+  </div>
+  <p><%= submit_tag "Send" %></p>
+<% end %>
+
+<p><a href="/">Back</a></p>
